@@ -250,7 +250,7 @@ raid:
 '<tr><td>Action</td><td>Confirm facilities escort by Friday</td><td>Low</td><td>No</td></tr></table>'+
 '</div><div class="cap">Sample log. Items marked Needs leadership decision appear in the weekly report.</div>'
 };
-var WEEK=[['bell','MONDAY 8 AM','Reminder','Leads with no update in 7 days get an email',0],['sync','ANYTIME','Auto-sync','Updates and milestones refresh the project record',0],['clock','FRIDAY NOON','Updates due','Post your weekly update',1],['mail','FRIDAY 1 PM','Report sent','Report emailed to leadership with the Excel file',1]];
+var WEEK=[['bell','MONDAY 8 AM','Reminder','Emails for missing updates and overdue items',0],['sync','ANYTIME','Auto-sync','Updates and milestones refresh the project record',0],['clock','FRIDAY NOON','Updates due','Post your weekly update',1],['mail','FRIDAY 1 PM','Report sent','Report emailed to leadership with the Excel file',1]];
 
 /* ---------- content ---------- */
 var MODULES=[
@@ -264,6 +264,13 @@ var MODULES=[
   ["ul",["Projects marked Yellow or Red, or not updated in 7 days","Open high-impact risks and issues","Critical milestones due within 7 days"]],
   ["p","Below that: all active projects and status updates from the last 14 days."],
   ["mock","home"]]},
+ {h:"Finding projects",b:[
+  ["p","In the left menu, point to <b>Projects</b>:"],
+  ["ul",["<b>My projects</b>: the ones you lead.","<b>All projects</b>: everything, grouped by category.","<b>All projects A–Z</b>: the same list without the groups."]],
+  ["p","To see one lead's projects, click the filter icon at the top of the list and pick names under <b>Project leads</b>."]]},
+ {h:"The status report, anytime",b:[
+  ["p","Click <b>Status report</b> on Home or in the left menu. It always shows the current picture: what needs attention, every active project by category, and decisions waiting."],
+  ["p","To share a copy, use your browser's Print and choose Save as PDF."]]},
  {h:"Project pages",b:[
   ["p","Each project page shows the project's status, team, milestones, risks and issues, documents, and status history. The buttons at the top do the common tasks."],
   ["mock","projectPage"]]},
@@ -271,9 +278,10 @@ var MODULES=[
   ["p","<span class='pill g'>Green</span> On track. <span class='pill y'>Yellow</span> At risk; needs attention. <span class='pill r'>Red</span> Off track; needs help now."]]}
  ],
  quiz:[
- {q:"Where do you see projects that need attention first?",o:["The Project Register","Home","The weekly report email","Each project's documents folder"],a:1},
+ {q:"Where do you see projects that need attention first?",o:["All projects A–Z","Home","The weekly report email","Each project's documents folder"],a:1},
  {q:"A project marked Yellow means:",o:["On track","Complete","At risk and needs attention","Off track and needs help now"],a:2},
- {q:"Which of these puts a Green project on Home's attention list?",o:["It has more than five milestones","It has no update in 7 days","Its lead changed","It has a new document"],a:1}
+ {q:"Which of these puts a Green project on Home's attention list?",o:["It has more than five milestones","It has no update in 7 days","Its lead changed","It has a new document"],a:1},
+ {q:"How do you see just one lead's projects?",o:["Ask District IT for a report","Open All projects and filter by Project leads","Search for the lead's name on Home","Open the weekly report email"],a:1}
  ]},
 {id:"m2",title:"Your weekly update",eyebrow:"Module 2 · The Friday routine",icon:"pencil",
  sections:[
@@ -303,7 +311,7 @@ var MODULES=[
  {h:"Risks, actions, issues, decisions",b:[
   ["ul",["<b>Risk:</b> something that might go wrong.","<b>Action:</b> a task with an owner and a date.","<b>Issue:</b> a problem happening now.","<b>Decision:</b> a choice that needs to be made or has been made."]],
   ["mock","raid"],
-  ["callout","<b>Need leadership to decide or act?</b> Set <b>Needs leadership decision</b> to Yes. It shows up in the weekly report."]]},
+  ["callout","<b>Need leadership to decide or act?</b> Set <b>Needs leadership decision</b> to Yes. District IT is emailed right away, and it shows up in the weekly report."]]},
  {h:"Closing items",b:[
   ["p","Set Status to Closed. For decisions, record what was decided in Resolution / decision."]]}
  ],
@@ -335,15 +343,17 @@ var MODULES=[
   ["p","Every Friday at 1 PM, the Hub builds the Weekly Project Status Report and emails it to the CIO and the project management office. The report is in the email and attached as the standard Excel status template, with one tab per active project. A dated copy is saved in the Hub."],
   ["p","It pulls the latest update, milestones done and coming up, issues, risks, and anything flagged for leadership. <b>You don't fill out the Excel report yourself.</b>"],
   ["callout","<b>No update that week?</b> Your project shows blank summaries in the report."]]},
- {h:"The Monday reminder",b:[
-  ["p","Every Monday at 8 AM, leads of active projects with no status update in 7 days get an email titled \"Update needed: [project].\" Post an update and the reminders stop."]]},
+ {h:"The Monday reminders",b:[
+  ["p","Every Monday at 8 AM, leads of active projects with no status update in 7 days get an email titled \"Update needed: [project].\" Post an update and the reminders stop. Projects On Hold are skipped."],
+  ["p","Owners of milestones, risks, and issues past their due date also get an email for each overdue item. Mark it Done or Closed, or set a new date."]]},
  {h:"New project requests",b:[
-  ["p","Anyone can submit a request from Home. It lands in the Project Register as Proposed. When District IT approves it, the project's document folders are created automatically."]]}
+  ["p","Anyone can submit a request from Home. It shows up in All projects, in the New Requests view, as Proposed. District IT approves or cancels it, and the requester gets an email either way. When it's approved, the project ID, project page, and document folders are created automatically."]]}
  ],
  quiz:[
  {q:"When is the weekly status report sent?",o:["Monday 8 AM","Friday noon","Friday 1 PM","Whenever a lead posts"],a:2},
  {q:"Who gets a Monday reminder?",o:["Every lead, every week","Leads with no update in 7 days","Only project sponsors","Leadership"],a:1},
- {q:"What do leads do to produce the Excel status report?",o:["Fill in the template each Friday","Email it to the PMO","Nothing; keep the Hub current and it's built automatically","Export it from the Register"],a:2}
+ {q:"What happens after District IT approves a request?",o:["The requester must create the folders","Nothing until Friday","The project ID, page, and folders are created automatically, and the requester is emailed","It's moved to Closed projects"],a:2},
+ {q:"What do leads do to produce the Excel status report?",o:["Fill in the template each Friday","Email it to the PMO","Nothing; keep the Hub current and it's built automatically","Export it from All projects"],a:2}
  ]}
 ];
 var ACCENT=["var(--blue-500)","var(--teal-500)","var(--gold-500)","var(--plum-500)","var(--navy-700)"];
