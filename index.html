@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IT Project Hub Tutorial</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+:root{
+  --navy-900:#0a1f3d;--navy-800:#0f2a4f;--navy-700:#173d6b;--blue-500:#2f6fb0;--blue-400:#4c8ac9;
+  --gold-500:#b8912f;--gold-300:#d9b869;--paper:#f5f6f8;--surface:#ffffff;--surface-2:#eef1f5;
+  --ink:#14213d;--ink-soft:#4a5878;--line:#d7dce6;--good:#1e7a4c;--bad:#a4302b;--warn:#b7791f;
+  --focus:#2f6fb0;--teal-500:#177d74;--plum-500:#7d3f68;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --navy-900:#0a1424;--navy-800:#0d1a30;--navy-700:#15294a;--blue-500:#6fa8dc;--blue-400:#8fbbe6;
+    --gold-500:#e0c15c;--gold-300:#f0da8f;--paper:#0b1220;--surface:#111a2c;--surface-2:#16223a;
+    --ink:#e7ecf5;--ink-soft:#a9b4cc;--line:#243250;--good:#5fbf8b;--bad:#e2837e;--warn:#e0b25c;
+    --focus:#8fbbe6;--teal-500:#4fb3a9;--plum-500:#c87fb0;
+  }
+}
+:root[data-theme="dark"]{
+  --navy-900:#0a1424;--navy-800:#0d1a30;--navy-700:#15294a;--blue-500:#6fa8dc;--blue-400:#8fbbe6;
+  --gold-500:#e0c15c;--gold-300:#f0da8f;--paper:#0b1220;--surface:#111a2c;--surface-2:#16223a;
+  --ink:#e7ecf5;--ink-soft:#a9b4cc;--line:#243250;--good:#5fbf8b;--bad:#e2837e;--warn:#e0b25c;
+  --focus:#8fbbe6;--teal-500:#4fb3a9;--plum-500:#c87fb0;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Source Sans 3',system-ui,sans-serif;line-height:1.55;}
+h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif;color:var(--ink);text-wrap:balance;margin:0;}
+a{color:var(--blue-500);}
+button{font-family:inherit;}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+.app{display:flex;min-height:100vh;}
+
+.rail{width:250px;flex:0 0 250px;background:var(--navy-900);color:#e7ecf5;padding:24px 18px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;}
+.brand{display:flex;align-items:center;gap:10px;appearance:none;background:none;border:none;padding:6px;margin:-6px;border-radius:10px;cursor:pointer;text-align:left;width:calc(100% + 12px);}
+.brand:hover{background:rgba(255,255,255,.06);}
+.brand .mark{width:40px;height:auto;border-radius:6px;flex:0 0 40px;display:block;}
+.brand .txt{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.brand .eyebrow{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-300);}
+.brand h1{font-size:16.5px;color:#fff;line-height:1.25;}
+.progress-wrap{display:flex;flex-direction:column;gap:6px;}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:#a9b8d6;}
+.progress-track{height:6px;border-radius:4px;background:rgba(255,255,255,.14);overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold-500),var(--gold-300));border-radius:4px;transition:width .4s ease;}
+.steps{display:flex;flex-direction:column;gap:4px;flex:1;}
+.step{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;width:100%;color:#8f9dc0;cursor:default;border:1px solid transparent;position:relative;appearance:none;background:none;font:inherit;text-align:left;}
+.step.clickable{cursor:pointer;}
+.step.clickable:hover{background:rgba(255,255,255,.07);}
+.step:not(:last-child)::after{content:"";position:absolute;left:23px;top:38px;width:1px;height:calc(100% - 6px);background:rgba(255,255,255,.12);}
+.step .num{width:26px;height:26px;border-radius:50%;flex:0 0 26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:rgba(255,255,255,.08);color:#9fb0d4;border:1px solid rgba(255,255,255,.14);z-index:1;}
+.step.done .num{background:#1e7a4c;color:#fff;border-color:#1e7a4c;}
+.step.done .num::before{content:"✓";}
+.step.current .num{background:var(--gold-500);color:#241a05;border-color:var(--gold-500);}
+.step.current{background:rgba(255,255,255,.06);}
+.step.locked{opacity:.4;}
+.step .label{min-width:0;}
+.step .label b{display:block;font-weight:600;font-size:13.5px;color:#e4e9f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.step.locked .label b{color:#8f9dc0;}
+.step .label span{font-size:11px;color:#7f8fb4;}
+.rail-foot{font-size:11px;color:#7c8bb0;border-top:1px solid rgba(255,255,255,.12);padding-top:12px;}
+
+.main{flex:1;min-width:0;display:flex;justify-content:center;padding:40px 24px 80px;}
+.sheet{width:100%;max-width:780px;display:flex;flex-direction:column;gap:28px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:32px 34px;box-shadow:0 1px 2px rgba(10,20,40,.04);}
+.intro-logo{height:52px;width:auto;border-radius:6px;margin-bottom:18px;}
+.module-head{display:flex;align-items:center;gap:14px;margin-bottom:6px;}
+.module-icon{width:44px;height:44px;border-radius:11px;flex:0 0 44px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb, var(--accent, var(--blue-500)) 16%, var(--surface));color:var(--accent, var(--blue-500));}
+.module-icon svg{width:22px;height:22px;}
+.kicker{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent, var(--blue-500));font-weight:700;margin-bottom:3px;}
+.card h2{font-size:25px;margin-bottom:4px;}
+.card h3{font-family:'Source Sans 3',system-ui,sans-serif;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--accent, var(--navy-700));margin:0;}
+.lede{color:var(--ink-soft);font-size:15px;margin-top:6px;}
+.section{border:1px solid var(--line);border-radius:12px;padding:18px 20px 20px;margin-top:16px;border-left:3px solid var(--accent, var(--blue-500));background:var(--surface);}
+.section p{color:var(--ink-soft);font-size:14.5px;margin:8px 0 0;}
+.section p:first-of-type{margin-top:10px;}
+.section b{color:var(--ink);}
+ul.plain,ol.plain{margin:10px 0 0;padding-left:20px;}
+ul.plain li,ol.plain li{margin-bottom:6px;color:var(--ink-soft);font-size:14.5px;}
+ul.check{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;}
+ul.check li{padding-left:24px;position:relative;color:var(--ink-soft);font-size:14.5px;}
+ul.check li::before{content:"✓";position:absolute;left:0;color:var(--good);font-weight:700;}
+.callout{background:var(--surface-2);border-left:3px solid var(--gold-500);border-radius:8px;padding:12px 16px;margin-top:14px;font-size:13.5px;color:var(--ink-soft);}
+.callout b{color:var(--ink);}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.compare div{border-radius:10px;padding:12px 14px;font-size:13.5px;color:var(--ink-soft);border:1px solid var(--line);}
+.compare .do{border-color:var(--good);background:color-mix(in srgb, var(--good) 8%, var(--surface));}
+.compare .dont{border-color:var(--bad);background:color-mix(in srgb, var(--bad) 7%, var(--surface));}
+.compare b{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;}
+.compare .do b{color:var(--good);} .compare .dont b{color:var(--bad);}
+@media (max-width:560px){.compare{grid-template-columns:1fr;}}
+
+/* mock screens */
+.mock{margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);font-size:13px;}
+.mock .bar{display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--surface-2);border-bottom:1px solid var(--line);font-size:11px;color:var(--ink-soft);}
+.mock .bar i{width:8px;height:8px;border-radius:50%;background:var(--line);display:inline-block;}
+.mock .bar span{margin-left:8px;}
+.mock .body{padding:14px 16px;}
+.mock .cap{font-size:11.5px;color:var(--ink-soft);padding:8px 16px;border-top:1px dashed var(--line);background:var(--surface-2);}
+.mock .ptitle{font-family:'Fraunces',serif;font-size:18px;color:var(--ink);}
+.mock .meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin:6px 0 10px;color:var(--ink-soft);font-size:12px;}
+.mock .btns{display:flex;flex-wrap:wrap;gap:6px;}
+.mock .btns span{background:var(--navy-800);color:#fff;border-radius:6px;padding:5px 9px;font-size:11.5px;}
+.mock .btns span.alt{background:var(--surface-2);color:var(--ink);border:1px solid var(--line);}
+.pill{display:inline-block;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700;color:#fff;}
+.pill.g{background:#1e7a4c;} .pill.y{background:#b7791f;} .pill.r{background:#a4302b;}
+.mock table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.mock th{text-align:left;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);border-bottom:1px solid var(--line);padding:5px 6px;}
+.mock td{border-bottom:1px solid var(--line);padding:6px;color:var(--ink);}
+.mock .grp{font-weight:700;color:var(--navy-700);font-size:12px;margin:10px 0 4px;}
+:root[data-theme="dark"] .mock .grp{color:var(--blue-400);}
+.mock .fld{margin-bottom:9px;}
+.mock .fld label{display:block;font-size:11.5px;font-weight:600;color:var(--ink-soft);margin-bottom:3px;}
+.mock .fld .in{border:1px solid var(--line);border-radius:6px;padding:6px 9px;background:var(--surface);color:var(--ink);min-height:30px;}
+.mock .fld .in.ta{min-height:44px;}
+.mock .radios{display:flex;gap:8px;flex-wrap:wrap;}
+.mock .radios span{border:1px solid var(--line);border-radius:6px;padding:4px 9px;}
+.mock .radios span.on{border-color:#1e7a4c;background:color-mix(in srgb,#1e7a4c 12%,var(--surface));font-weight:600;}
+.tl{display:flex;justify-content:space-between;gap:8px;position:relative;margin-top:16px;}
+.tl::before{content:"";position:absolute;left:12%;right:12%;top:20px;height:3px;background:linear-gradient(90deg,var(--blue-500),var(--navy-700));border-radius:2px;}
+.tl .ev{flex:1;text-align:center;position:relative;}
+.tl .dot{width:42px;height:42px;border-radius:50%;margin:0 auto;background:var(--blue-500);border:3px solid var(--surface);display:flex;align-items:center;justify-content:center;color:#fff;}
+.tl .ev.n .dot{background:var(--navy-700);}
+.tl .dot svg{width:19px;height:19px;}
+.tl .when{font-size:10.5px;letter-spacing:.1em;font-weight:700;color:var(--blue-500);margin-top:6px;}
+.tl .what{font-weight:700;font-size:13.5px;color:var(--ink);}
+.tl .desc{font-size:12px;color:var(--ink-soft);line-height:1.35;margin-top:2px;}
+@media (max-width:560px){.tl{flex-direction:column;}.tl::before{display:none;}}
+
+.crumbbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:10px 14px;margin:-40px -24px 0;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+.crumbbar .homebtn{display:flex;align-items:center;gap:6px;appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 12px;font-size:13.5px;font-weight:600;cursor:pointer;}
+.crumbbar .homebtn:hover{background:var(--surface-2);}
+.crumbbar .homebtn svg{width:16px;height:16px;}
+.crumbbar .crumb{font-size:13px;color:var(--ink-soft);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+.crumbbar .crumb b{color:var(--ink);font-weight:600;}
+.crumbbar select{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 8px;font:inherit;font-size:13px;max-width:200px;}
+.mainwrap{flex:1;min-width:0;display:flex;flex-direction:column;}
+@media (max-width:760px){.crumbbar{margin:-20px -16px 0;}}
+@media (max-width:560px){.crumbbar .crumb{display:none;}.crumbbar select{flex:1;max-width:none;}}
+.section-picker{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+@media (max-width:560px){.section-picker{grid-template-columns:1fr;}}
+.pick{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--line);border-radius:12px;padding:14px 15px;background:var(--surface);appearance:none;font:inherit;color:var(--ink);cursor:pointer;}
+.pick:hover{border-color:var(--pick-accent, var(--blue-500));background:var(--surface-2);}
+.pick:disabled{cursor:not-allowed;opacity:.55;}
+.pick .picon{width:38px;height:38px;border-radius:10px;flex:0 0 38px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb, var(--pick-accent, var(--blue-500)) 16%, var(--surface));color:var(--pick-accent, var(--blue-500));}
+.pick .picon svg{width:19px;height:19px;}
+.pick .ptxt{min-width:0;}
+.pick .ptxt b{display:block;font-size:14px;}
+.pick .ptxt span{font-size:12px;color:var(--ink-soft);}
+.pick .plock{margin-left:auto;font-size:11px;color:var(--ink-soft);flex:0 0 auto;}
+
+.nav-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.btn{appearance:none;border:1px solid var(--navy-700);background:var(--navy-900);color:#fff;padding:11px 22px;border-radius:8px;font-size:14.5px;font-weight:600;cursor:pointer;}
+.btn:hover{background:var(--navy-700);}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);}
+.btn.ghost:hover{background:var(--surface-2);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn.gold{background:var(--gold-500);border-color:var(--gold-500);color:#241a05;}
+.btn.gold:hover{background:var(--gold-300);}
+
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+.qcount{font-size:13px;color:var(--ink-soft);}
+.question{padding:20px 0;border-top:1px solid var(--line);}
+.question:first-of-type{border-top:none;padding-top:8px;}
+.qtext{font-weight:700;margin-bottom:12px;font-size:15.5px;display:flex;gap:10px;}
+.qtext .qn{color:var(--accent, var(--blue-500));font-family:'Fraunces',serif;font-size:16px;}
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{display:flex;gap:12px;align-items:center;padding:11px 14px;border-radius:10px;cursor:pointer;border:1px solid var(--line);font-size:14.5px;background:var(--surface);position:relative;}
+.opt:hover{background:var(--surface-2);border-color:var(--accent, var(--blue-500));}
+.opt input{position:absolute;opacity:0;pointer-events:none;}
+.opt .letter{width:24px;height:24px;border-radius:7px;flex:0 0 24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line);}
+.opt.selected{border-color:var(--accent, var(--blue-500));background:color-mix(in srgb, var(--accent, var(--blue-500)) 8%, var(--surface));}
+.opt.selected .letter{background:var(--accent, var(--blue-500));color:#fff;border-color:var(--accent, var(--blue-500));}
+.opt.correct{background:rgba(30,122,76,.12);border-color:var(--good);}
+.opt.correct .letter{background:var(--good);color:#fff;border-color:var(--good);}
+.opt.incorrect{background:rgba(164,48,43,.12);border-color:var(--bad);}
+.opt.incorrect .letter{background:var(--bad);color:#fff;border-color:var(--bad);}
+.opt.disabled{cursor:default;}
+.fb{font-size:13px;margin-top:8px;font-weight:600;}
+.fb.good{color:var(--good);} .fb.bad{color:var(--bad);}
+.result-banner{border-radius:10px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;font-size:14.5px;margin-top:6px;}
+.result-banner.pass{background:rgba(30,122,76,.12);border:1px solid var(--good);}
+.result-banner.fail{background:rgba(164,48,43,.12);border:1px solid var(--bad);}
+.result-banner .badge{font-size:20px;line-height:1;}
+.done-hero{text-align:center;padding:10px 0 4px;}
+.done-hero .big{width:64px;height:64px;border-radius:50%;background:var(--good);color:#fff;font-size:32px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+
+@media (max-width:760px){
+  .app{flex-direction:column;}
+  .rail{width:100%;flex:none;position:relative;height:auto;flex-direction:row;align-items:center;flex-wrap:wrap;gap:14px;padding:16px;}
+  .steps{display:none;} .progress-wrap{flex:1;min-width:140px;} .rail-foot{display:none;}
+  .main{padding:20px 16px 56px;} .card{padding:22px 18px;}
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+(function(){
+"use strict";
+var LOGO_SRC="data:image/png;base64,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";
+var STORE="itprojecthub_tutorial_v1";
+
+var I={
+ home:'<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
+ pencil:'<path d="M4 20h4l11-11-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/>',
+ flag:'<path d="M6 3v18"/><path d="M6 4h11l-2.5 3.5L17 11H6"/>',
+ users:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2c2.8.4 5 2.8 5 5.8"/>',
+ sync:'<path d="M20 11a8 8 0 0 0-14.3-4.3L4 9"/><path d="M4 4v5h5"/><path d="M4 13a8 8 0 0 0 14.3 4.3L20 15"/><path d="M20 20v-5h-5"/>',
+ bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4l2-2z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>'
+};
+function svg(k){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+I[k]+'</svg>';}
+
+/* ---------- mock screens (generic sample data) ---------- */
+var MOCK={
+projectPage:
+'<div class="bar"><i></i><i></i><i></i><span>IT Project Hub › Projects › Sample: Campus Wi-Fi Refresh</span></div><div class="body">'+
+'<div class="ptitle">Campus Wi-Fi Refresh</div>'+
+'<div class="meta"><span><span class="pill y">Yellow</span></span><span>Status: In progress</span><span>Phase: Execution</span><span>Last updated: 6 days ago</span><span>Next milestone: Access points installed, Building B</span></div>'+
+'<div class="btns"><span>Post a status update</span><span>Log a risk, issue, or decision</span><span>Add a milestone</span><span>Add a team member</span><span>Upload a document</span><span class="alt">Edit project details</span><span class="alt">All projects</span></div>'+
+'</div><div class="cap">Sample project page. Buttons at the top do the common tasks for that project.</div>',
+home:
+'<div class="bar"><i></i><i></i><i></i><span>IT Project Hub › Home</span></div><div class="body">'+
+'<div class="grp">Needs attention</div><table><tr><th>Project</th><th>Health</th><th>Why</th></tr>'+
+'<tr><td>Help Desk Ticketing Upgrade</td><td><span class="pill r">Red</span></td><td>Vendor delay</td></tr>'+
+'<tr><td>Campus Wi-Fi Refresh</td><td><span class="pill y">Yellow</span></td><td>At risk</td></tr>'+
+'<tr><td>Printer Fleet Consolidation</td><td><span class="pill g">Green</span></td><td>No update in 9 days</td></tr></table>'+
+'<div class="grp">Critical milestones due in 7 days</div><table><tr><td>Firewall cutover window approved</td><td style="text-align:right;color:var(--ink-soft)">Thu</td></tr></table>'+
+'</div><div class="cap">Sample Home page. What needs attention comes first; all active projects and recent updates are below.</div>',
+update:
+'<div class="bar"><i></i><i></i><i></i><span>Post a status update</span></div><div class="body">'+
+'<div class="fld"><label>Project</label><div class="in">Campus Wi-Fi Refresh</div></div>'+
+'<div class="fld"><label>Overall status</label><div class="radios"><span class="on">Green (On Track)</span><span>Yellow (At Risk)</span><span>Red (Off Track)</span></div></div>'+
+'<div class="fld"><label>Health summary (one sentence)</label><div class="in">Building A done; Building B installs start Monday, on schedule.</div></div>'+
+'<div class="fld"><label>Business phase summary</label><div class="in ta">Faculty notified of Building B work windows. No classroom disruption expected.</div></div>'+
+'<div class="fld" style="margin-bottom:0"><label>Technical phase summary</label><div class="in ta">42 of 80 access points live. Controller config validated in Building A.</div></div>'+
+'</div><div class="cap">Sample update. Takes about 10 minutes. Saving it updates the project\'s health and Last updated.</div>',
+raid:
+'<div class="bar"><i></i><i></i><i></i><span>Risks, actions, issues, decisions</span></div><div class="body"><table>'+
+'<tr><th>Type</th><th>Item</th><th>Impact</th><th>Leadership?</th></tr>'+
+'<tr><td>Risk</td><td>Switch delivery may slip two weeks</td><td>High</td><td>No</td></tr>'+
+'<tr><td>Issue</td><td>Building B ceiling access blocked</td><td>Medium</td><td>No</td></tr>'+
+'<tr><td>Decision</td><td>Approve weekend install window</td><td>High</td><td><b>Yes</b></td></tr>'+
+'<tr><td>Action</td><td>Confirm facilities escort by Friday</td><td>Low</td><td>No</td></tr></table>'+
+'</div><div class="cap">Sample log. Items marked Needs leadership decision appear in the weekly report.</div>'
+};
+var WEEK=[['bell','MONDAY 8 AM','Reminder','Leads with no update in 7 days get an email',0],['sync','ANYTIME','Auto-sync','Updates and milestones refresh the project record',0],['clock','FRIDAY NOON','Updates due','Post your weekly update',1],['mail','FRIDAY 1 PM','Report sent','Report emailed to leadership with the Excel file',1]];
+
+/* ---------- content ---------- */
+var MODULES=[
+{id:"m1",title:"Find your way",eyebrow:"Module 1 · Getting around",icon:"home",
+ sections:[
+ {h:"What the Hub is",b:[
+  ["p","The IT Project Hub is District IT's one place for IT projects: what's underway, who's working on it, how it's going, the risks, the milestones, and the files."],
+  ["p","Every project has its own page. Click a project's name anywhere on the site to open it."]]},
+ {h:"Home",b:[
+  ["p","Home opens on what needs attention first:"],
+  ["ul",["Projects marked Yellow or Red, or not updated in 7 days","Open high-impact risks and issues","Critical milestones due within 7 days"]],
+  ["p","Below that: all active projects and status updates from the last 14 days."],
+  ["mock","home"]]},
+ {h:"Project pages",b:[
+  ["p","Each project page shows the project's status, team, milestones, risks and issues, documents, and status history. The buttons at the top do the common tasks."],
+  ["mock","projectPage"]]},
+ {h:"What the colors mean",b:[
+  ["p","<span class='pill g'>Green</span> On track. <span class='pill y'>Yellow</span> At risk; needs attention. <span class='pill r'>Red</span> Off track; needs help now."]]}
+ ],
+ quiz:[
+ {q:"Where do you see projects that need attention first?",o:["The Project Register","Home","The weekly report email","Each project's documents folder"],a:1},
+ {q:"A project marked Yellow means:",o:["On track","Complete","At risk and needs attention","Off track and needs help now"],a:2},
+ {q:"Which of these puts a Green project on Home's attention list?",o:["It has more than five milestones","It has no update in 7 days","Its lead changed","It has a new document"],a:1}
+ ]},
+{id:"m2",title:"Your weekly update",eyebrow:"Module 2 · The Friday routine",icon:"pencil",
+ sections:[
+ {h:"The routine",b:[
+  ["p","By <b>Friday noon</b> each week, for each project you lead:"],
+  ["ol",["Post a status update.","Mark milestones done and add new ones.","Log new risks, issues, or decisions."]],
+  ["callout","<b>Why noon?</b> The weekly status report is built at 1 PM Friday from whatever is in the Hub at that moment."]]},
+ {h:"Post a status update",b:[
+  ["ol",["On the project page, click <b>Post a status update</b>.","Pick the project and set Overall status: Green, Yellow, or Red.","Write the health summary in one sentence.","Add a short business summary and technical summary.","Click <b>Save</b>."]],
+  ["mock","update"],
+  ["p","Saving sets the project's health, status note, and Last updated for you."]]},
+ {h:"Write it so leadership can use it",b:[
+  ["compare",["Network closet upgrade on schedule; procurement done, installs start next week.","We held several meetings and continue making progress."]]]},
+ {h:"Edit project details, only when needed",b:[
+  ["p","Click <b>Edit project details</b> only when the status, phase, start date, or target end date changes. You don't set Health, Last updated, or Next milestone there. Those fill in on their own."]]}
+ ],
+ quiz:[
+ {q:"When are weekly updates due?",o:["Monday at 8 AM","Friday at noon","Friday at 5 PM","The last day of the month"],a:1},
+ {q:"Which health summary is better?",o:["We continue to make progress.","Meetings were held this week.","Firewall cutover done; testing finishes Wednesday.","Everything is fine."],a:2},
+ {q:"After you post a status update, what do you need to change in Edit project details?",o:["Health and Last updated","Next milestone","Nothing, unless status, phase, or dates changed","All of the above"],a:2}
+ ]},
+{id:"m3",title:"Milestones, risks and decisions",eyebrow:"Module 3 · Keeping it current",icon:"flag",
+ sections:[
+ {h:"Milestones",b:[
+  ["ol",["On the project page, click <b>Add a milestone</b>.","Enter the milestone, due date, owner, and status.","Turn on <b>Critical</b> if the project end date slips when this milestone slips.","Use <b>Depends on</b> to pick milestones that must finish first.","When it's finished, set Status to Done and enter Completed on."]],
+  ["p","The project's next open milestone shows on the project record automatically."]]},
+ {h:"Risks, actions, issues, decisions",b:[
+  ["ul",["<b>Risk:</b> something that might go wrong.","<b>Action:</b> a task with an owner and a date.","<b>Issue:</b> a problem happening now.","<b>Decision:</b> a choice that needs to be made or has been made."]],
+  ["mock","raid"],
+  ["callout","<b>Need leadership to decide or act?</b> Set <b>Needs leadership decision</b> to Yes. It shows up in the weekly report."]]},
+ {h:"Closing items",b:[
+  ["p","Set Status to Closed. For decisions, record what was decided in Resolution / decision."]]}
+ ],
+ quiz:[
+ {q:"A vendor shipment is late right now. Log it as:",o:["Risk","Action","Issue","Decision"],a:2},
+ {q:"How do you get an item in front of leadership in the weekly report?",o:["Email the CIO","Set Needs leadership decision to Yes","Mark the project Red","Add it as a milestone"],a:1},
+ {q:"When should you turn on Critical for a milestone?",o:["When it's due this week","When the project end date slips if it slips","When it has an owner","Always"],a:1}
+ ]},
+{id:"m4",title:"Team and documents",eyebrow:"Module 4 · People and files",icon:"users",
+ sections:[
+ {h:"Project team",b:[
+  ["p","The project's leads and sponsor are set on the project itself. Use <b>Add a team member</b> for everyone else, such as a technical lead, developer, analyst, vendor, or stakeholder."],
+  ["ol",["Click <b>Add a team member</b>.","Pick the project.","Pick the person from the directory and choose their role.","Click Save."]],
+  ["p","For vendors or anyone outside the organization, leave Person blank and type their name, email, and phone."]]},
+ {h:"Documents",b:[
+  ["ol",["Click <b>Upload a document</b>. This opens the project's folder.","Open the folder for the document type, such as Charter or Vendor.","Upload or drag the file in."]],
+  ["p","Files in a type folder are tagged with the project and type automatically and show on the project page."],
+  ["callout","<b>Meeting recordings:</b> don't upload the video. Upload the transcript, or a link to the recording."]]}
+ ],
+ quiz:[
+ {q:"Where are a project's leads and sponsor set?",o:["Add a team member","On the project itself","In the documents folder","In the weekly update"],a:1},
+ {q:"How does a document get tagged with its project and type?",o:["You type the tags","Automatically, from the folder you upload to","District IT tags it weekly","It isn't tagged"],a:1},
+ {q:"What should you upload for a recorded meeting?",o:["The video file","The transcript or a link to the recording","Nothing","A screenshot"],a:1}
+ ]},
+{id:"m5",title:"What runs on its own",eyebrow:"Module 5 · Automation",icon:"sync",
+ sections:[
+ {h:"Your week, automated",b:[["timeline"]]},
+ {h:"The weekly status report",b:[
+  ["p","Every Friday at 1 PM, the Hub builds the Weekly Project Status Report and emails it to the CIO and the project management office. The report is in the email and attached as the standard Excel status template, with one tab per active project. A dated copy is saved in the Hub."],
+  ["p","It pulls the latest update, milestones done and coming up, issues, risks, and anything flagged for leadership. <b>You don't fill out the Excel report yourself.</b>"],
+  ["callout","<b>No update that week?</b> Your project shows blank summaries in the report."]]},
+ {h:"The Monday reminder",b:[
+  ["p","Every Monday at 8 AM, leads of active projects with no status update in 7 days get an email titled \"Update needed: [project].\" Post an update and the reminders stop."]]},
+ {h:"New project requests",b:[
+  ["p","Anyone can submit a request from Home. It lands in the Project Register as Proposed. When District IT approves it, the project's document folders are created automatically."]]}
+ ],
+ quiz:[
+ {q:"When is the weekly status report sent?",o:["Monday 8 AM","Friday noon","Friday 1 PM","Whenever a lead posts"],a:2},
+ {q:"Who gets a Monday reminder?",o:["Every lead, every week","Leads with no update in 7 days","Only project sponsors","Leadership"],a:1},
+ {q:"What do leads do to produce the Excel status report?",o:["Fill in the template each Friday","Email it to the PMO","Nothing; keep the Hub current and it's built automatically","Export it from the Register"],a:2}
+ ]}
+];
+var ACCENT=["var(--blue-500)","var(--teal-500)","var(--gold-500)","var(--plum-500)","var(--navy-700)"];
+
+/* ---------- state ---------- */
+var state={screen:"intro",answers:{},checked:{},done:{}};
+try{var saved=JSON.parse(localStorage.getItem(STORE)||"null");if(saved&&typeof saved==="object")state=Object.assign(state,saved);}catch(e){}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){}}
+
+function el(tag,attrs,kids){var e=document.createElement(tag);if(attrs)for(var k in attrs){var v=attrs[k];if(v==null)continue;if(k==="class")e.className=v;else if(k==="html")e.innerHTML=v;else if(k.indexOf("on")===0)e.addEventListener(k.slice(2),v);else e.setAttribute(k,v);}(kids||[]).forEach(function(c){if(c!=null)e.appendChild(typeof c==="string"?document.createTextNode(c):c);});return e;}
+function idx(id){for(var i=0;i<MODULES.length;i++)if(MODULES[i].id===id)return i;return -1;}
+function allDone(){return MODULES.every(function(m){return state.done[m.id];});}
+function unlocked(i){return true;}
+function pct(){var n=MODULES.filter(function(m){return state.done[m.id];}).length;return Math.round(n/MODULES.length*100);}
+
+var root=document.getElementById("app");
+function render(){root.innerHTML="";root.appendChild(rail());root.appendChild(main());persist();}
+function goTo(s){state.screen=s;window.scrollTo(0,0);render();}
+
+function step(num,label,sub,cur,unl,done,fn){
+ var cls="step"+(cur?" current":"")+(done?" done":"")+(!unl?" locked":"")+(fn?" clickable":"");
+ return el("button",{class:cls,type:"button",disabled:fn?null:"disabled",onclick:fn||function(){}},[el("div",{class:"num"},[done?"":num]),el("div",{class:"label"},[el("b",null,[label]),el("span",null,[sub])])]);
+}
+function rail(){
+ var p=pct(),steps=[step("1","Welcome","Overview",state.screen==="intro",true,false,function(){goTo("intro");})];
+ MODULES.forEach(function(m,i){
+  var u=unlocked(i),cur=state.screen.indexOf(m.id+"-")===0;
+  var sub=state.done[m.id]?"Complete":(state.screen===m.id+"-quiz"?"Knowledge check":(u?"Reading":"Locked"));
+  steps.push(step(String(i+2),m.title,sub,cur,u,!!state.done[m.id],u?function(){goTo(m.id+"-content");}:null));
+ });
+ return el("div",{class:"rail"},[
+  el("button",{class:"brand",type:"button",onclick:function(){goTo("intro");},"aria-label":"Tutorial home"},[
+   el("img",{class:"mark",src:LOGO_SRC,alt:"Wayne County Community College District"}),
+   el("div",{class:"txt"},[el("div",{class:"eyebrow"},["District IT"]),el("h1",null,["IT Project Hub Tutorial"])])]),
+  el("div",{class:"progress-wrap"},[el("div",{class:"progress-label"},[el("span",null,["Progress"]),el("span",null,[p+"%"])]),el("div",{class:"progress-track"},[el("div",{class:"progress-fill",style:"width:"+p+"%"})])]),
+  el("div",{class:"steps"},steps),
+  el("div",{class:"rail-foot"},["Self-paced · about 20 minutes"])
+ ]);
+}
+function main(){
+ var sheet=el("div",{class:"sheet"});
+ if(state.screen==="intro")sheet.appendChild(intro());
+ else if(state.screen==="finish")sheet.appendChild(finish());
+ else{var parts=state.screen.split("-"),m=MODULES[idx(parts[0])];if(!m){state.screen="intro";sheet.appendChild(intro());}else sheet.appendChild(parts[1]==="content"?content(m):quiz(m));}
+ if(state.screen!=="intro")sheet.insertBefore(crumbbar(),sheet.firstChild);
+ return el("main",{class:"main"},[sheet]);
+}
+function crumbbar(){
+ var parts=state.screen.split("-"),i=idx(parts[0]),m=MODULES[i];
+ var crumb=el("div",{class:"crumb"},state.screen==="finish"?[el("b",null,["Finished"])]:[ "Module "+(i+1)+" · ",el("b",null,[m.title]),parts[1]==="quiz"?" · Knowledge check":""]);
+ var sel=el("select",{"aria-label":"Jump to a module",onchange:function(e){if(e.target.value)goTo(e.target.value);}},[el("option",{value:""},["Jump to…"])].concat(MODULES.map(function(mm,k){return el("option",{value:mm.id+"-content",disabled:unlocked(k)?null:"disabled"},[(k+1)+". "+mm.title+(state.done[mm.id]?" ✓":(unlocked(k)?"":" (locked)"))]);})));
+ return el("div",{class:"crumbbar"},[el("button",{class:"homebtn",type:"button",onclick:function(){goTo("intro");},html:svg("home")+"<span>Home</span>"}),crumb,sel]);
+}
+function nextIncomplete(){for(var i=0;i<MODULES.length;i++)if(!state.done[MODULES[i].id])return MODULES[i].id+"-content";return "finish";}
+
+function intro(){
+ var c=el("div",{class:"card"});
+ c.appendChild(el("img",{class:"intro-logo",src:LOGO_SRC,alt:"Wayne County Community College District"}));
+ c.appendChild(el("div",{class:"kicker"},["District IT · Project leads and staff"]));
+ c.appendChild(el("h2",null,["Welcome to the IT Project Hub"]));
+ c.appendChild(el("p",{class:"lede"},["A short, self-paced walkthrough of the Hub: where things are, what to do each week, and what runs on its own. Plan for about 20 minutes. Go in any order. Your progress is saved in this browser."]));
+ c.appendChild(el("h3",{style:"margin-top:20px"},["When you finish, you'll be able to:"]));
+ c.appendChild(el("ul",{class:"check"},["Find any project and see what needs attention","Post a useful weekly status update by Friday noon","Keep milestones, risks, issues, and decisions current","Add team members and upload documents the right way","Know what the Hub does for you automatically"].map(function(t){return el("li",null,[t]);})));
+ c.appendChild(el("div",{class:"callout"},[el("b",null,["Note: "]),"Screens in this tutorial use made-up sample projects."]));
+ c.appendChild(el("h3",{style:"margin-top:26px"},["Modules"]));
+ var pk=el("div",{class:"section-picker"});
+ MODULES.forEach(function(m,i){var u=unlocked(i),d=!!state.done[m.id];
+  pk.appendChild(el("button",{class:"pick",type:"button",style:"--pick-accent:"+ACCENT[i]+";",disabled:u?null:"disabled",onclick:u?function(){goTo(m.id+"-content");}:null},[
+   el("div",{class:"picon",html:svg(m.icon)}),el("div",{class:"ptxt"},[el("b",null,[m.title]),el("span",null,[m.eyebrow])]),el("div",{class:"plock"},[d?"✓ Done":(u?"":"🔒 Locked")])]));});
+ c.appendChild(pk);
+ var started=MODULES.some(function(m){return state.done[m.id];});
+ c.appendChild(el("div",{class:"nav-actions",style:"margin-top:22px"},[
+  el("span",{class:"qcount"},[MODULES.length+" modules · a quick check after each · go in any order"]),
+  el("div",{style:"display:flex;gap:10px"},[
+   started?el("button",{class:"btn ghost",onclick:function(){if(!confirm("Start over? This clears your progress on this device."))return;state.answers={};state.checked={};state.done={};goTo("intro");}},["Start over"]):null,
+   el("button",{class:"btn",onclick:function(){goTo(nextIncomplete());}},[started?"Continue →":"Begin →"])])
+ ]));
+ return c;
+}
+
+function block(b){
+ var t=b[0];
+ if(t==="p")return el("p",{html:b[1]});
+ if(t==="ul"||t==="ol")return el(t,{class:"plain"},b[1].map(function(x){return el("li",{html:x});}));
+ if(t==="callout")return el("div",{class:"callout",html:b[1]});
+ if(t==="mock")return el("div",{class:"mock","aria-label":"Sample screen",html:MOCK[b[1]]});
+ if(t==="compare")return el("div",{class:"compare"},[el("div",{class:"do"},[el("b",null,["Do"]),b[1][0]]),el("div",{class:"dont"},[el("b",null,["Avoid"]),b[1][1]])]);
+ if(t==="timeline")return el("div",{class:"tl"},WEEK.map(function(w){return el("div",{class:"ev"+(w[4]?" n":"")},[el("div",{class:"dot",html:svg(w[0])}),el("div",{class:"when"},[w[1]]),el("div",{class:"what"},[w[2]]),el("div",{class:"desc"},[w[3]])]);}));
+ return null;
+}
+function content(m){
+ var i=idx(m.id),c=el("div",{class:"card",style:"--accent:"+ACCENT[i]+";"});
+ c.appendChild(el("div",{class:"module-head"},[el("div",{class:"module-icon",html:svg(m.icon)}),el("div",null,[el("div",{class:"kicker"},[m.eyebrow]),el("h2",null,[m.title])])]));
+ c.appendChild(el("p",{class:"lede"},["Read through each part, then try the short check. Jump to any module at any time."]));
+ m.sections.forEach(function(s){var sec=el("div",{class:"section"});sec.appendChild(el("h3",null,[s.h]));s.b.forEach(function(b){var e=block(b);if(e)sec.appendChild(e);});c.appendChild(sec);});
+ c.appendChild(el("div",{class:"nav-actions",style:"margin-top:22px;border-top:1px solid var(--line);padding-top:20px"},[
+  el("button",{class:"btn ghost",onclick:function(){goTo(i===0?"intro":MODULES[i-1].id+"-content");}},["← Back"]),
+  el("button",{class:"btn",onclick:function(){goTo(m.id+"-quiz");}},["Knowledge check →"])]));
+ return c;
+}
+function quiz(m){
+ var i=idx(m.id);
+ if(!state.answers[m.id])state.answers[m.id]=m.quiz.map(function(){return null;});
+ var ans=state.answers[m.id],chk=!!state.checked[m.id],all=ans.every(function(a){return a!==null;}),ok=chk&&ans.every(function(a,k){return a===m.quiz[k].a;});
+ var c=el("div",{class:"card",style:"--accent:"+ACCENT[i]+";"});
+ c.appendChild(el("div",{class:"kicker"},[m.eyebrow]));
+ c.appendChild(el("div",{class:"qhead"},[el("h2",null,["Knowledge check"]),el("span",{class:"qcount"},[m.quiz.length+" questions"])]));
+ c.appendChild(el("p",{class:"lede"},["Three quick questions. You'll see the right answers when you check."]));
+ var L=["A","B","C","D"];
+ m.quiz.forEach(function(q,qi){
+  var blk=el("div",{class:"question"});
+  blk.appendChild(el("div",{class:"qtext"},[el("span",{class:"qn"},[String(qi+1)]),q.q]));
+  var os=el("div",{class:"opts"});
+  q.o.forEach(function(o,oi){
+   var sel=ans[qi]===oi,cls="opt"+(chk?" disabled":"")+(sel&&!chk?" selected":"");
+   if(chk){if(oi===q.a)cls+=" correct";else if(sel)cls+=" incorrect";}
+   var lab=el("label",{class:cls},[el("input",{type:"radio",name:m.id+"_"+qi,disabled:chk?"disabled":null,onchange:function(){ans[qi]=oi;render();}}),el("span",{class:"letter"},[L[oi]]),el("span",null,[o])]);
+   if(sel)lab.querySelector("input").checked=true;
+   os.appendChild(lab);
+  });
+  blk.appendChild(os);
+  if(chk){var good=ans[qi]===q.a;blk.appendChild(el("div",{class:"fb "+(good?"good":"bad")},[good?"Correct.":"Not quite. Correct answer: "+q.o[q.a]]));}
+  c.appendChild(blk);
+ });
+ var score=ans.filter(function(x,k){return x===m.quiz[k].a;}).length;
+ if(chk)c.appendChild(ok?el("div",{class:"result-banner pass"},[el("span",{class:"badge"},["✓"]),el("div",null,[el("b",null,["All correct."]),el("div",null,["Nice work."])])]):el("div",{class:"result-banner fail"},[el("span",{class:"badge"},["!"]),el("div",null,[el("b",null,[score+" of "+m.quiz.length+" right."]),el("div",null,["The right answers are marked in green above."])])]));
+ var act=el("div",{class:"nav-actions",style:"margin-top:14px;border-top:1px solid var(--line);padding-top:20px"});
+ act.appendChild(el("button",{class:"btn ghost",onclick:function(){goTo(m.id+"-content");}},["← Review module"]));
+ if(!chk)act.appendChild(el("button",{class:"btn",disabled:all?null:"disabled",onclick:function(){state.checked[m.id]=true;state.done[m.id]=true;render();}},["Check answers"]));
+ else act.appendChild(el("button",{class:"btn gold",onclick:function(){goTo(i===MODULES.length-1?"finish":MODULES[i+1].id+"-content");}},[i===MODULES.length-1?"Finish →":"Next: "+MODULES[i+1].title+" →"]));
+ c.appendChild(act);
+ return c;
+}
+function finish(){
+ var c=el("div",{class:"card"});
+ c.appendChild(el("div",{class:"done-hero"},[el("div",{class:"big"},["✓"]),el("h2",null,[allDone()?"You're ready":"Nearly there"]),el("p",{class:"lede"},[allDone()?"You've finished the tutorial. Here's your week in one list.":"A few modules are still open. Pick them up anytime from the menu."])]));
+ var sec=el("div",{class:"section",style:"--accent:var(--good)"});
+ sec.appendChild(el("h3",null,["Your weekly checklist"]));
+ sec.appendChild(el("ul",{class:"check"},["Post a status update for each project you lead, by Friday noon","Mark milestones done; add new ones","Log new risks, issues, and decisions","Flag anything leadership needs to decide","Upload new documents to the right folder"].map(function(t){return el("li",null,[t]);})));
+ c.appendChild(sec);
+ c.appendChild(el("div",{class:"nav-actions",style:"margin-top:22px"},[el("button",{class:"btn ghost",onclick:function(){goTo("intro");}},["← Back to start"]),el("button",{class:"btn ghost",onclick:function(){if(!confirm("Start over? This clears your progress on this device."))return;state.answers={};state.checked={};state.done={};goTo("intro");}},["Start over"])]));
+ return c;
+}
+render();
+})();
+</script>
+</body>
+</html>
